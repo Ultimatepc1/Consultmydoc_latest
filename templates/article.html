@@ -1,0 +1,73 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  <h1>{{article.title}}</h1>
+  {% if session.userrole %}
+  <div>
+    <a href="/edit_article/{{article.id}}" class="btn btn-success" style="float: right;">Answer question</a>
+  </div>
+  {% endif %}
+  {% if session.username==article.author %}
+  <form action="{{url_for('delete_article', id=article.id)}}" method="post" style="float: right;">
+    <input type="hidden" name="_method" value="DELETE">
+    <input type="submit" value="Delete" class="btn btn-danger">
+  </form><p>
+  {%endif%}
+  {% if session.isquestionlike %}
+  <form action="{{url_for('unlike_question', id=article.id)}}" method="POST">
+  <button style="float: right;"class="btn btn-primary"><img src="https://icons.iconarchive.com/icons/iconarchive/blue-election/512/Election-Thumbs-Down-icon.png" alt="Thumbsdown image" width="20" height="20">  {{article.likes}} likes</button>
+  </form>
+  {% else %}
+  <form action="{{url_for('like_question', id=article.id)}}" method="POST">
+  <button style="float: right;"class="btn btn-primary"><img src="http://icons.iconarchive.com/icons/iconarchive/blue-election/256/Election-Thumbs-Up-icon.png" alt="Thumbsup image" width="20" height="20">  {{article.likes}} likes</button>
+  </form>
+  {% endif %}
+  {% if session.isanswered %}
+  <span style="color:  #00cc00;">{{article.answered}}</span>
+  {% else %}
+  <span style="color:  #ff0000;">{{article.answered}}</span>
+  {% endif %}
+  <p>Asked by {{article.author}} on {{article.create_date}}</p>
+  <hr>
+  <div>
+    {{article.body | safe}}
+  </div>
+  {% if session.isanswered %}
+    <h3>Answers</h3><hr>
+    {% if session.isanswerlike %}
+    {% for article in answerlikes %}
+    <hr>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item" style="background: linear-gradient(to right, #ffff66 0%, #ff9933 100%)">{{article.ans_body | safe}}
+        <form action="{{url_for('unlike_answer', id=article.ans_id)}}" method="POST" style="background-color: #337ab7;">
+          <button class="align-self-end btn mt-auto btn-block btn-primary" style="margin-top: auto;"><img src="https://icons.iconarchive.com/icons/iconarchive/blue-election/512/Election-Thumbs-Down-icon.png" alt="Thumbsdown image" width="20" height="20">  {{article.likes}} likes</button>
+        </form>
+        <span class="badge badge-dark badge-pill float-right">Answered by {{article.Doctor_username}} on {{article.create_date}}</span>
+      </li>
+    </ul>
+    {%endfor%}
+    {% for  article in doctorans%}
+    <hr>
+    <ul class="list-group list-group-flush"></ul>
+      <li class="list-group-item" style="background: linear-gradient(to right, #ffff66 0%, #ff9933 100%)">{{article.ans_body | safe}}
+        <form action="{{url_for('like_answer', id=article.ans_id)}}" method="POST" style="background-color: #337ab7;">
+          <button class="align-self-end btn mt-auto btn-block btn-primary" style="margin-top: auto;"><img src="http://icons.iconarchive.com/icons/iconarchive/blue-election/256/Election-Thumbs-Up-icon.png" alt="Thumbsup image" width="20" height="20">  {{article.likes}} likes</button>
+        </form>
+        <span class="badge badge-dark badge-pill float-right">Answered by {{article.Doctor_username}} on {{article.create_date}}</span>
+      </li>
+    </ul>
+    {%endfor%}
+    {% else %}
+    {% for article in doctorans %}
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item" style="background: linear-gradient(to right, #ffff66 0%, #ff9933 100%)">{{article.ans_body | safe}}
+          <form action="{{url_for('like_answer', id=article.ans_id)}}" method="POST" style="background-color: #337ab7;">
+            <button class="align-self-end btn mt-auto btn-block btn-primary" style="margin-top: auto;"><img src="http://icons.iconarchive.com/icons/iconarchive/blue-election/256/Election-Thumbs-Up-icon.png" alt="Thumbsup image" width="20" height="20">  {{article.likes}} likes</button>
+          </form>
+        <span class="badge badge-dark badge-pill float-right">Answered by {{article.Doctor_username}} on {{article.create_date}}</span>        
+      </li>
+    </ul>
+    {%endfor%}
+  {%endif%}
+  {% endif %}
+{%endblock%}
